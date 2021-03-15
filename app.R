@@ -178,7 +178,8 @@ server <- function(input, output) {
             #dplyr::filter(athlete %in% isolate(input$athlete_select) | (isolate(input$athlete_select) == "All")) %>%
             dplyr::filter(athlete %ni% input$athlete | is.null(input$athlete)) %>%
             dplyr::filter(date >= min(input$date) & date <= max(input$date)) %>%
-            dplyr::filter(position %in% input$position | is.null(input$position))
+            dplyr::filter(position %in% input$position | is.null(input$position)) %>%
+            dplyr::filter(!is.na(points_total) & !is.na(points_total_run))
         
         p <- ggplot(
             plotdata,
@@ -222,7 +223,7 @@ server <- function(input, output) {
         p <- p +
             geom_point(size = 3) +
             geom_line() +
-            geom_text_repel(data = . %>%
+            geom_text_repel(data = plotdata %>%
                                 dplyr::group_by(athlete) %>%
                                 dplyr::filter(date == max(date)) %>%
                                 dplyr::ungroup(),
