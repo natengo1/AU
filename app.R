@@ -19,6 +19,16 @@ data_stat <- map_dfr(files_stat, ~readr::read_csv(paste0("./data/",.x)) %>%
     tidyr::separate(col = filename,
                     into = c("date","captain1","captain2","filetype"),
                     sep = "_") %>%
+    dplyr::mutate(K = replace_na(K,0),
+                  E = replace_na(E,0),
+                  A = replace_na(A,0),
+                  ES = replace_na(ES,0),
+                  SA = replace_na(SA,0),
+                  SE = replace_na(SE,0),
+                  R = replace_na(R,0),
+                  RE = replace_na(RE,0),
+                  D = replace_na(D,0),
+                  B = replace_na(B,0)) %>%
     dplyr::mutate(date = lubridate::ymd(date),
                   stat_total = rowSums(across(.cols = c(K:B)))) %>%
     dplyr::select(-RANK,-filetype) %>%
@@ -43,6 +53,8 @@ data_win <- map_dfr(files_win, ~readr::read_csv(paste0("./data/",.x)) %>%
     tidyr::separate(col = filename,
                     into = c("date","captain1","captain2","filetype"),
                     sep = "_") %>%
+    dplyr::mutate(`SETS WON` = replace_na(`SETS WON`,0),
+                  `GAMES WON` = replace_na(`GAMES WON`,0)) %>%
     dplyr::mutate(date = lubridate::ymd(date),
                   win_total = rowSums(across(.cols = c(`SETS WON`,`GAMES WON`)))) %>%
     dplyr::select(-RANK,-filetype) %>%
@@ -70,6 +82,9 @@ data_mvp <- map_dfr(files_mvp, ~readr::read_csv(paste0("./data/",.x)) %>%
     dplyr::rename(first_place = `1ST PLACE`,
                   second_place = `2ND PLACE`,
                   third_place = `3RD PLACE`) %>%
+    dplyr::mutate(first_place = replace_na(first_place,0),
+                  second_place = replace_na(second_place,0),
+                  third_place = replace_na(third_place,0)) %>%
     dplyr::mutate(date = lubridate::ymd(date),
                   mvp_total = rowSums(across(.cols = c(first_place,second_place,third_place)))) %>%
     dplyr::select(-RANK,-filetype) %>%
